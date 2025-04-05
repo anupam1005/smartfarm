@@ -73,7 +73,7 @@ const analyzeImage = async (imagePath: string, cropType: string): Promise<Partia
 router.get('/:farmerId', async (req: express.Request, res: express.Response) => {
   try {
     const analyses = await CropAnalysis.find({ farmerId: req.params.farmerId })
-      .sort({ timestamp: -1 })
+      .sort({ createdAt: -1 })
       .limit(10);
     res.json(analyses);
   } catch (error) {
@@ -99,18 +99,17 @@ router.post('/', upload.single('image'), async (req: express.Request & { file?: 
     const analysisResult = await analyzeImage(req.file.path, cropType);
 
     // Create new crop analysis record
-    const cropAnalysis = new CropAnalysis({
+    const cropAnalysis = {
       farmerId,
       imageUrl: req.file.path,
       cropType,
-      location: {
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude)
-      },
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
       ...analysisResult
-    });
+    };
 
-    await cropAnalysis.save();
+    const newAnalysis = new CropAnalysis(cropAnalysis);
+    await newAnalysis.save();
 
     // Broadcast the analysis result through WebSocket if critical
     if (analysisResult.healthStatus === 'Critical' || analysisResult.healthStatus === 'Requires Attention') {

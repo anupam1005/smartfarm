@@ -1,5 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export interface IssueCount {
+  [key: string]: number;
+}
+
 export interface ICropAnalysis extends Document {
   farmerId: string;
   imageUrl: string;

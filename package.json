@@ -1,31 +1,41 @@
 {
   "name": "smartfarm",
   "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@capacitor/android": "^7.1.0",
-    "@capacitor/cli": "^7.1.0",
-    "@capacitor/core": "^7.1.0",
-    "@capacitor/ios": "^7.1.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.17.1",
-    "@mui/material": "^5.14.9",
-    "axios": "^1.8.4",
-    "react": "^18.2.0",
-    "react-dev-utils": "^12.0.1",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.15.0",
-    "react-scripts": "5.0.1"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
-    "build:android": "npm run build && npx cap sync android",
-    "build:ios": "npm run build && npx cap sync ios",
-    "test": "react-scripts test",
+    "start": "set PORT=3002 && react-scripts start",
+    "test": "vitest",
+    "build": "tsc && vite build",
     "eject": "react-scripts eject",
-    "deploy": "vercel --prod"
+    "dev": "vite",
+    "serve": "vite preview",
+    "preview": "vite preview",
+    "server": "nodemon server/server.js"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/cli": "^7.2.0",
+    "@capacitor/core": "^7.2.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.1",
+    "@mui/material": "^7.0.1",
+    "@mui/styled-engine": "^7.0.1",
+    "@mui/system": "^7.0.1",
+    "axios": "^1.8.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemon": "^3.1.9",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^7.5.0",
+    "react-scripts": "^3.0.1",
+    "recharts": "^2.15.2",
+    "socket.io": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "typescript": "^4.9.5"
   },
   "browserslist": {
     "production": [
@@ -38,15 +48,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/axios": "^0.9.36",
-    "@types/mongoose": "^5.11.96",
-    "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.10",
-    "@types/react": "^19.0.12",
-    "@types/react-dom": "^19.0.4",
-    "typescript": "^4.9.5",
-    "vercel": "^32.5.0"
   }
 }

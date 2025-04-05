@@ -14,7 +14,7 @@ class WebSocketServer {
   private weatherUpdateInterval: NodeJS.Timeout | null = null;
 
   constructor(server: Server) {
-    this.wss = new WebSocket.Server({ server });
+    this.wss = new WebSocket.Server({ server, path: '/ws' });
     this.initialize();
   }
 
@@ -87,17 +87,37 @@ class WebSocketServer {
   }
 
   private broadcast(message: WebSocketMessage) {
-    const messageStr = JSON.stringify(message);
-    this.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(messageStr);
-      }
-    });
+    try {
+      const messageStr = JSON.stringify(message);
+      this.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(messageStr, (error) => {
+            if (error) {
+              console.error('Error sending message:', error);
+              this.clients.delete(client);
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error broadcasting message:', error);
+    }
   }
 
   private sendToClient(client: WebSocket, message: WebSocketMessage) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(message));
+    try {
+      if (client.readyState === WebSocket.OPEN) {
+        const messageStr = JSON.stringify(message);
+        client.send(messageStr, (error) => {
+          if (error) {
+            console.error('Error sending message to client:', error);
+            this.clients.delete(client);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error sending message to client:', error);
+      this.clients.delete(client);
     }
   }
 

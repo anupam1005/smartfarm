@@ -1,98 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Card, 
-  CardContent,
-  Grid,
-  CircularProgress
-} from '@mui/material';
-import { WbSunny, Opacity, Air } from '@mui/icons-material';
+import React from 'react';
+import {Typography, Paper, Box } from '@mui/material';
+import Grid from '@mui/material/Grid';
 
-function WeatherInfo() {
-  const [weatherData, setWeatherData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulated weather data fetch
-    const fetchWeather = async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setWeatherData({
-        current: {
-          temp: 25,
-          humidity: 65,
-          windSpeed: 12,
-          condition: 'Sunny'
-        },
-        forecast: [
-          { day: 'Tomorrow', temp: 27, condition: 'Partly Cloudy' },
-          { day: 'Day 2', temp: 24, condition: 'Rain' },
-          { day: 'Day 3', temp: 26, condition: 'Sunny' }
-        ]
-      });
-      setLoading(false);
-    };
+interface WeatherData {
+  temperature: number;
+  humidity: number;
+  windSpeed: number;
+  description: string;
+}
 
-    fetchWeather();
-  }, []);
-
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
+const WeatherInfo: React.FC<{ data: WeatherData }> = ({ data }) => {
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Weather Information
+    <Paper elevation={3} sx={{ padding: 3, borderRadius: 2 }}>
+      <Typography variant="h5" gutterBottom>
+        ☁️ Weather Information
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Current Weather
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <WbSunny sx={{ mr: 1 }} />
-                <Typography>Temperature: {weatherData.current.temp}°C</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Opacity sx={{ mr: 1 }} />
-                <Typography>Humidity: {weatherData.current.humidity}%</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Air sx={{ mr: 1 }} />
-                <Typography>Wind Speed: {weatherData.current.windSpeed} km/h</Typography>
-              </Box>
-            </CardContent>
-          </Card>
+      <Grid container spacing={2} component="div">
+        <Grid item xs={12} md={6} component="div">
+          <Box sx={{ p: 2, bgcolor: 'primary.light', borderRadius: 1 }}>
+            <Typography variant="h6">🌡️ Temperature:</Typography>
+            <Typography variant="body1">{data.temperature}°C</Typography>
+          </Box>
         </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                3-Day Forecast
-              </Typography>
-              {weatherData.forecast.map((day: any, index: number) => (
-                <Box key={index} sx={{ mb: 2 }}>
-                  <Typography variant="subtitle1">{day.day}</Typography>
-                  <Typography color="textSecondary">
-                    {day.temp}°C - {day.condition}
-                  </Typography>
-                </Box>
-              ))}
-            </CardContent>
-          </Card>
+        <Grid item xs={12} md={6} component="div">
+          <Box sx={{ p: 2, bgcolor: 'secondary.light', borderRadius: 1 }}>
+            <Typography variant="h6">💧 Humidity:</Typography>
+            <Typography variant="body1">{data.humidity}%</Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={6} component="div">
+          <Box sx={{ p: 2, bgcolor: 'success.light', borderRadius: 1 }}>
+            <Typography variant="h6">💨 Wind Speed:</Typography>
+            <Typography variant="body1">{data.windSpeed} km/h</Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={6} component="div">
+          <Box sx={{ p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
+            <Typography variant="h6">🌤️ Condition:</Typography>
+            <Typography variant="body1">{data.description}</Typography>
+          </Box>
         </Grid>
       </Grid>
-    </Box>
+    </Paper>
   );
-}
+};
 
 export default WeatherInfo;

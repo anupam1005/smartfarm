@@ -1,29 +1,23 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box } from '@mui/material';
-import { ArrowBack, Home } from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
+
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isHome = location.pathname === '/';
-
   return (
-    <AppBar position="sticky">
+    <AppBar position="static">
       <Toolbar>
-        {!isHome && (
-          <IconButton color="inherit" onClick={() => navigate(-1)} sx={{ mr: 2 }}>
-            <ArrowBack />
-          </IconButton>
-        )}
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          SmartFarm
+        <Typography variant="h6" style={{ flexGrow: 1 }}>
+          Pixel Pioneer
         </Typography>
-        {!isHome && (
-          <IconButton color="inherit" onClick={() => navigate('/')}>
-            <Home />
-          </IconButton>
-        )}
+        <Button color="inherit" component={Link} to="/">
+          Home
+        </Button>
+        <Button color="inherit" component={Link} to="/crop-analysis">
+          Crop Analysis
+        </Button>
+        <Button color="inherit" component={Link} to="/weather">
+          Weather
+        </Button>
       </Toolbar>
     </AppBar>
   );

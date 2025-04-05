@@ -1,6 +1,7 @@
 import express from 'express';
 import { Recommendation } from '../services/api';
-import CropAnalysis from '../models/CropAnalysisModel';
+import CropAnalysis, { ICropAnalysis } from '../models/CropAnalysisModel';
+import CropAnalysisDAO from '../models/CropAnalysisDAO';
 
 const router = express.Router();
 
@@ -8,15 +9,17 @@ const router = express.Router();
 const generateRecommendations = async (farmerId: string): Promise<Recommendation[]> => {
   try {
     // Get recent crop analyses
-    const recentAnalyses = await CropAnalysis.find({ farmerId })
-      .sort({ timestamp: -1 })
-      .limit(5);
+    const recentAnalyses = await CropAnalysisDAO.findByFarmerId(farmerId, 5) as ICropAnalysis[];
 
     const recommendations: Recommendation[] = [];
 
     // Analyze crop health trends
-    const healthIssues = recentAnalyses.reduce((issues, analysis) => {
-      analysis.detectedIssues.forEach(issue => {
+    interface IssueCount {
+  [key: string]: number;
+}
+
+const healthIssues = recentAnalyses.reduce<IssueCount>((issues, analysis: ICropAnalysis) => {
+      analysis.detectedIssues.forEach((issue: string) => {
         if (!issues[issue]) {
           issues[issue] = 1;
         } else {
@@ -28,34 +31,39 @@ const generateRecommendations = async (farmerId: string): Promise<Recommendation
 
     // Generate recommendations based on recurring issues
     Object.entries(healthIssues).forEach(([issue, count]) => {
-      if (count >= 2) {
+      if ((count as number) >= 2) {
         let recommendation: Recommendation = {
           cropType: recentAnalyses[0].cropType,
-          recommendation: '',
-          priority: 'Low',
+          text: '',
+          priority: 'low',
+          category: 'general',
           timestamp: new Date()
         };
 
         switch (issue.toLowerCase()) {
           case 'leaf discoloration':
-            recommendation.recommendation = 'Consider applying balanced NPK fertilizer and checking soil pH';
-            recommendation.priority = 'Medium';
+            recommendation.text = 'Consider applying balanced NPK fertilizer and checking soil pH';
+            recommendation.priority = 'medium';
+            recommendation.category = 'fertilization';
             break;
           case 'pest infestation':
-            recommendation.recommendation = 'Implement integrated pest management techniques';
-            recommendation.priority = 'High';
+            recommendation.text = 'Implement integrated pest management techniques';
+            recommendation.priority = 'high';
+            recommendation.category = 'pestControl';
             break;
           case 'nutrient deficiency':
-            recommendation.recommendation = 'Conduct soil test and apply specific nutrients based on results';
-            recommendation.priority = 'Medium';
+            recommendation.text = 'Conduct soil test and apply specific nutrients based on results';
+            recommendation.priority = 'medium';
+            recommendation.category = 'fertilization';
             break;
           case 'water stress':
-            recommendation.recommendation = 'Adjust irrigation schedule and consider mulching';
-            recommendation.priority = 'High';
+            recommendation.text = 'Adjust irrigation schedule and consider mulching';
+            recommendation.priority = 'high';
+            recommendation.category = 'irrigation';
             break;
         }
 
-        if (recommendation.recommendation) {
+        if (recommendation.text) {
           recommendations.push(recommendation);
         }
       }
@@ -70,21 +78,23 @@ const generateRecommendations = async (farmerId: string): Promise<Recommendation
       winter: [11, 0, 1]
     };
 
-    let seasonalRecommendation = {
+    let seasonalRecommendation: Recommendation = {
       cropType: recentAnalyses[0]?.cropType || 'General',
-      recommendation: '',
-      priority: 'Medium' as const,
+      text: '',
+      priority: 'medium',
+      category: 'general',
       timestamp: new Date()
     };
 
     if (seasons.spring.includes(currentMonth)) {
-      seasonalRecommendation.recommendation = 'Prepare for spring planting: check soil temperature and moisture levels';
+      seasonalRecommendation.text = 'Prepare for spring planting: check soil temperature and moisture levels';
     } else if (seasons.summer.includes(currentMonth)) {
-      seasonalRecommendation.recommendation = 'Monitor water needs closely during peak growing season';
+      seasonalRecommendation.text = 'Monitor water needs closely during peak growing season';
+      seasonalRecommendation.category = 'irrigation';
     } else if (seasons.fall.includes(currentMonth)) {
-      seasonalRecommendation.recommendation = 'Plan harvest schedule and prepare for frost protection';
+      seasonalRecommendation.text = 'Plan harvest schedule and prepare for frost protection';
     } else {
-      seasonalRecommendation.recommendation = 'Maintain soil health and plan for next growing season';
+      seasonalRecommendation.text = 'Maintain soil health and plan for next growing season';
     }
 
     recommendations.push(seasonalRecommendation);

@@ -4,13 +4,29 @@ import { WeatherInfo } from '../services/api';
 const router = express.Router();
 
 // Mock weather data generator
-const generateWeatherData = (): WeatherInfo => ({
-  temperature: 20 + Math.random() * 10,
-  humidity: 40 + Math.random() * 40,
-  rainfall: Math.random() * 5,
-  forecast: 'Partly cloudy',
-  timestamp: new Date()
-});
+const generateWeatherData = (): WeatherInfo => {
+  const currentTemp = 20 + Math.random() * 10;
+  const conditions = ['Clear', 'Partly cloudy', 'Cloudy', 'Overcast', 'Rain'][Math.floor(Math.random() * 5)];
+  
+  return {
+    temperature: {
+      current: currentTemp,
+      min: currentTemp - 5,
+      max: currentTemp + 5,
+      feelsLike: currentTemp - 2
+    },
+    humidity: 40 + Math.random() * 40,
+    rainfall: Math.random() * 5,
+    forecast: 'Partly cloudy',
+    timestamp: new Date(),
+    soilMoisture: 40 + Math.random() * 30,
+    uvIndex: Math.floor(1 + Math.random() * 10),
+    windSpeed: Math.floor(5 + Math.random() * 20),
+    windDirection: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(Math.random() * 8)],
+    conditions: conditions,
+    alerts: []
+  };
+}
 
 // Get current weather data
 router.get('/current', async (req, res) => {

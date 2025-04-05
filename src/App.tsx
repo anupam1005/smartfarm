@@ -1,57 +1,27 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Box, ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import './App.css';
 import Dashboard from './components/Dashboard';
-import CropAnalysis from './components/CropAnalysis';
-import Navbar from './components/Navbar';
+import SensorData from './components/SensorData.tsx'; // Ensure the file exists at this path
+import Navigation from './components/Navigation.tsx';
+import WeatherInfo from './components/WeatherInfo';
+import AddEntry from './components/AddEntry.tsx'; // if extension is needed
+
+
+const dummyWeatherData = {
+  temperature: 25,
+  humidity: 60,
+  windSpeed: 10,
+  description: "Clear sky"
+};
 
 function App() {
-  const theme = createTheme({
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            minHeight: 48, // Better touch targets
-            fontSize: '1rem'
-          }
-        }
-      },
-      MuiBottomNavigation: {
-        styleOverrides: {
-          root: {
-            height: 64 // Larger bottom navigation for mobile
-          }
-        }
-      }
-    }
-  });
-
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          minHeight: '100vh',
-          width: '100%',
-          overflow: 'hidden',
-          WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
-        }}>
-          <Navbar />
-          <Box component="main" sx={{ 
-            flexGrow: 1,
-            padding: { xs: 1, sm: 2, md: 3 }, // Responsive padding
-            overflowY: 'auto'
-          }}>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/crop-analysis" element={<CropAnalysis />} />
-            </Routes>
-          </Box>
-        </Box>
-      </Router>
-    </ThemeProvider>
+    <div className="App">
+      <Navigation />
+      <Dashboard />
+      <SensorData />
+      <WeatherInfo data={dummyWeatherData} />
+      <AddEntry />
+    </div>
   );
 }
 

@@ -24,6 +24,9 @@ import {
 interface Recommendation {
   text: string;
   priority: 'high' | 'medium' | 'low';
+  category: 'irrigation' | 'fertilization' | 'pestControl' | 'general';
+  cropType: string;
+  timestamp: Date;
 }
 
 interface RecommendationData {
@@ -51,25 +54,73 @@ const Recommendations: React.FC = () => {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        // Simulated API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         
+        const currentDate = new Date();
         setRecommendations({
           irrigation: [
-            { text: 'Increase watering frequency to twice daily', priority: 'high' },
-            { text: 'Maintain soil moisture between 60-70%', priority: 'medium' }
+            { 
+              text: 'Increase watering frequency to twice daily',
+              priority: 'high',
+              category: 'irrigation',
+              cropType: 'General',
+              timestamp: currentDate
+            },
+            { 
+              text: 'Maintain soil moisture between 60-70%',
+              priority: 'medium',
+              category: 'irrigation',
+              cropType: 'General',
+              timestamp: currentDate
+            }
           ],
           fertilization: [
-            { text: 'Apply nitrogen-rich fertilizer this week', priority: 'high' },
-            { text: 'Consider organic compost application', priority: 'low' }
+            {
+              text: 'Apply nitrogen-rich fertilizer this week',
+              priority: 'high',
+              category: 'fertilization',
+              cropType: 'General',
+              timestamp: currentDate
+            },
+            {
+              text: 'Consider organic compost application',
+              priority: 'low',
+              category: 'fertilization',
+              cropType: 'General',
+              timestamp: currentDate
+            }
           ],
           pestControl: [
-            { text: 'Monitor for aphid infestation', priority: 'medium' },
-            { text: 'Apply natural pesticides if needed', priority: 'low' }
+            {
+              text: 'Monitor for aphid infestation',
+              priority: 'medium',
+              category: 'pestControl',
+              cropType: 'General',
+              timestamp: currentDate
+            },
+            {
+              text: 'Apply natural pesticides if needed',
+              priority: 'low',
+              category: 'pestControl',
+              cropType: 'General',
+              timestamp: currentDate
+            }
           ],
           general: [
-            { text: 'Prepare for upcoming temperature changes', priority: 'medium' },
-            { text: 'Plan crop rotation for next season', priority: 'low' }
+            {
+              text: 'Prepare for upcoming temperature changes',
+              priority: 'medium',
+              category: 'general',
+              cropType: 'General',
+              timestamp: currentDate
+            },
+            {
+              text: 'Plan crop rotation for next season',
+              priority: 'low',
+              category: 'general',
+              cropType: 'General',
+              timestamp: currentDate
+            }
           ]
         });
       } catch (error) {
